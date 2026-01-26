@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive HTML Reference</title>
+  <style>
+    :root {
+      --bg-light: #f0f0f0;
+      --bg-dark: #1e1e1e;
+      --text-light: #000;
+      --text-dark: #fff;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .controls button {
+      padding: 8px 12px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    details {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin: 10px 0;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    body.dark details {
+      background-color: #2c2c2c;
+      border-color: #555;
+    }
+
+    summary {
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+
+    .example-desc {
+      margin: 6px 0 16px 0;
+      color: #444;
+      font-size: 13px;
+    }
+
+    body.dark .example-desc {
+      color: #cfcfcf;
+    }
+
+    /* Copy button / lint UI */
+    .example-wrap { position: relative; }
+    .copy-btn {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      border: none;
+      background: #2b2b2b;
+      color: white;
+      cursor: pointer;
+    }
+    body.dark .copy-btn { background: #444; }
+
+    .more-note { display: none; color: #666; font-size: 12px; margin-top:6px }
+    body.dark .more-note { color: #bfbfbf }
+
+    /* toast for copy confirmations */
+    .toast {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 18px;
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: none;
+      z-index: 1200;
+      font-size: 13px;
+    }
+    body.dark .toast { background: rgba(255,255,255,0.06); color: #fff; }
+
+    /* Definition modal */
+    .def-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.5); display: flex; align-items: center; 
+                justify-content: center; z-index: 2000; }
+    .def-modal-content { background: white; padding: 20px; border-radius: 8px; 
+                        max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    body.dark .def-modal-content { background: #2c2c2c; color: #eee; }
+    .def-close { position: absolute; top: 10px; right: 10px; background: none; 
+                border: none; font-size: 24px; cursor: pointer; color: #666; }
+    body.dark .def-close { color: #ccc; }
+    .def-modal-content h3 { margin: 0 0 10px 0; color: #2c3e50; }
+    body.dark .def-modal-content h3 { color: #3498db; }
+    .def-modal-content p { margin: 0; line-height: 1.6; font-size: 14px; }
+
+    code.clickable { cursor: help; text-decoration: underline; text-decoration-style: dotted; }
+
+    code {
+      color: #c7254e;
+      background-color: #f9f2f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .editor, .quiz {
+      margin-top: 30px;
+    }
+
+    /* --- EDITED: Split View CSS --- */
+    .code-split-view {
+      display: flex;
+      gap: 20px;
+      height: 450px; /* Fixed height for the split view */
+      align-items: stretch;
+    }
+
+    textarea {
+      width: 100%;
+      /* removed fixed height here to let flex handle it in split view */
+      font-family: monospace;
+      font-size: 14px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      background: #fff;
+      color: #000;
+    }
+
+    iframe {
+      width: 100%;
+      /* removed fixed height here */
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      border-radius: 5px;
+      background: #fff;
+    }
+
+    /* Specific styles for the Split View items */
+    .code-split-view textarea {
+      flex: 1;
+      height: 100%;
+      resize: none; /* Disable manual resize in split view */
+    }
+
+    .code-split-view iframe {
+      flex: 1;
+      height: 100%;
+      margin-top: 0; /* Remove top margin in split view */
+    }
+
+    /* Mobile Responsive for Split View */
+    @media (max-width: 768px) {
+      .code-split-view {
+        flex-direction: column;
+        height: auto;
+      }
+      .code-split-view textarea {
+        height: 200px;
+        resize: vertical;
+      }
+      .code-split-view iframe {
+        height: 300px;
+        margin-top: 10px;
+      }
+    }
+
+    /* Dark-mode styles for editor and preview */
+    body.dark textarea {
+      background-color: #222;
+      color: #eaeaea;
+      border-color: #444;
+    }
+
+    body.dark textarea::placeholder {
+      color: #b9b9b9;
+    }
+
+    body.dark iframe {
+      background: #1e1e1e;
+      border-color: #444;
+    }
+
+    .quiz-question {
+      margin-bottom: 15px;
+    }
+
+    .quiz-question label {
+      display: block;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌐 Interactive HTML Reference Guide</h1>
+
+  <div class="controls">
+    <button id="toggleSectionsBtn" type="button">🔄 Expand/Collapse All</button>
+    <button id="toggleThemeBtn" type="button">🌙 Toggle Dark Mode</button>
+  </div>
+  <div style="background:#e3f2fd;padding:10px;border-radius:5px;margin:10px 0;font-size:14px;border-left:4px solid #2196F3;">
+    <strong>💡 Tip:</strong> Click on any tag/property in the bullet lists (like <code>&lt;html&gt;</code>, <code>display</code>) to see its definition. Double-click on tags in code examples.
+  </div>
+  <div id="toast" class="toast" aria-live="polite" role="status"></div>
+
+  <!-- Tag/Attribute Definition Modal -->
+  <div id="defModal" class="def-modal" style="display:none;">
+    <div class="def-modal-content">
+      <button id="defClose" class="def-close">&times;</button>
+      <h3 id="defTitle"></h3>
+      <p id="defBody"></p>
+    </div>
+  </div>
+
+  <!-- Reference Sections -->
+  <details open>
+    <summary>1️⃣ Beginner Tags</summary>
+    <ul>
+      <li><code class="def-term" data-term="!doctype">&lt;!doctype html&gt;</code>, <code class="def-term" data-term="html">&lt;html&gt;</code>, <code class="def-term" data-term="head">&lt;head&gt;</code>, <code class="def-term" data-term="body">&lt;body&gt;</code></li>
+      <li><code class="def-term" data-term="title">&lt;title&gt;</code>, <code class="def-term" data-term="meta">&lt;meta&gt;</code>, <code class="def-term" data-term="link">&lt;link&gt; (styles)</code></li>
+      <li><code class="def-term" data-term="h1">&lt;h1&gt;</code> to <code class="def-term" data-term="h6">&lt;h6&gt;</code>, <code class="def-term" data-term="p">&lt;p&gt;</code>, <code class="def-term" data-term="br">&lt;br&gt;</code></li>
+      <li><code class="def-term" data-term="strong">&lt;strong&gt;</code>, <code class="def-term" data-term="em">&lt;em&gt;</code>, <code class="def-term" data-term="small">&lt;small&gt;</code></li>
+    </ul>
+    <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;Page Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Welcome&lt;/h1&gt;
+  &lt;p&gt;This is a paragraph.&lt;br&gt;New line here.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>2️⃣ Intermediate: Lists, Links & Images</summary>
+    <ul>
+      <li><code class="def-term" data-term="ul">&lt;ul&gt;</code>, <code class="def-term" data-term="ol">&lt;ol&gt;</code>, <code class="def-term" data-term="li">&lt;li&gt;</code></li>
+      <li><code class="def-term" data-term="a">&lt;a&gt;</code>, <code class="def-term" data-term="img">&lt;img&gt;</code>, <code class="def-term" data-term="picture">&lt;picture&gt;</code>, <code class="def-term" data-term="figure">&lt;figure&gt;</code>, <code class="def-term" data-term="figcaption">&lt;figcaption&gt;</code></li>
+    </ul>
+    <pre><code>&lt;ul&gt;
+  &lt;li&gt;HTML&lt;/li&gt;
+  &lt;li&gt;CSS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;a href="https://example.com" target="_blank" rel="noopener"&gt;Visit example&lt;/a&gt;
+
+&lt;figure&gt;
+  &lt;img src="logo.png" alt="Logo" width="200"&gt;
+  &lt;figcaption&gt;Site logo&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;picture&gt;
+  &lt;source srcset="image.webp" type="image/webp"&gt;
+  &lt;img src="image.jpg" alt="Fallback image"&gt;
+&lt;/picture&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>3️⃣ Intermediate: Containers & Layout</summary>
+    <ul>
+      <li><code class="def-term" data-term="div">&lt;div&gt;</code>, <code class="def-term" data-term="span">&lt;span&gt;</code>, <code class="def-term" data-term="hr">&lt;hr&gt;</code>, <code class="def-term" data-term="pre">&lt;pre&gt;</code></li>
+      <li><code class="def-term" data-term="nav">&lt;nav&gt;</code>, <code class="def-term" data-term="main">&lt;main&gt;</code>, <code class="def-term" data-term="section">&lt;section&gt;</code>, <code class="def-term" data-term="aside">&lt;aside&gt;</code>, <code class="def-term" data-term="footer">&lt;footer&gt;</code></li>
+    </ul>
+    <pre><code>&lt;nav&gt;
+  &lt;ul&gt;&lt;li&gt;Home&lt;/li&gt;&lt;li&gt;About&lt;/li&gt;&lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;main&gt;
+  &lt;section&gt;Main Section&lt;/section&gt;
+  &lt;aside&gt;Sidebar content&lt;/aside&gt;
+&lt;/main&gt;
+
+&lt;hr&gt;
+
+&lt;pre&gt;
+  Line 1
+  Line 2
+&lt;/pre&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>4️⃣ Intermediate: Forms & Inputs</summary>
+    <ul>
+      <li><code class="def-term" data-term="form">&lt;form&gt;</code>, <code class="def-term" data-term="input">&lt;input&gt;</code>, <code class="def-term" data-term="label">&lt;label&gt;</code>, <code class="def-term" data-term="textarea">&lt;textarea&gt;</code>, <code class="def-term" data-term="select">&lt;select&gt;</code>, <code class="def-term" data-term="button">&lt;button&gt;</code></li>
+    </ul>
+    <pre><code>&lt;form action="#" method="post"&gt;
+  &lt;label for="name"&gt;Name:&lt;/label&gt;
+  &lt;input id="name" name="name" type="text" placeholder="Name"&gt;
+
+  &lt;label for="msg"&gt;Message:&lt;/label&gt;
+  &lt;textarea id="msg" name="message"&gt;Your message&lt;/textarea&gt;
+
+  &lt;label for="topic"&gt;Topic:&lt;/label&gt;
+  &lt;select id="topic" name="topic"&gt;
+    &lt;option value="general"&gt;General&lt;/option&gt;
+    &lt;option value="feedback"&gt;Feedback&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>5️⃣ Advanced: Tables & Semantic Tags</summary>
+    <ul>
+      <li><code class="def-term" data-term="table">&lt;table&gt;</code>, <code class="def-term" data-term="caption">&lt;caption&gt;</code>, <code class="def-term" data-term="thead">&lt;thead&gt;</code>, <code class="def-term" data-term="tbody">&lt;tbody&gt;</code>, <code class="def-term" data-term="tr">&lt;tr&gt;</code>, <code class="def-term" data-term="td">&lt;td&gt;</code>, <code class="def-term" data-term="th">&lt;th&gt;</code></li>
+      <li><code class="def-term" data-term="header">&lt;header&gt;</code>, <code class="def-term" data-term="footer">&lt;footer&gt;</code>, <code class="def-term" data-term="section">&lt;section&gt;</code>, <code class="def-term" data-term="article">&lt;article&gt;</code>, <code class="def-term" data-term="nav">&lt;nav&gt;</code></li>
+    </ul>
+    <pre><code>&lt;table border="1"&gt;
+  &lt;caption&gt;User list&lt;/caption&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Aman&lt;/td&gt;&lt;td&gt;19&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;header&gt;Site Header&lt;/header&gt;
+&lt;section&gt;Main Content&lt;/section&gt;
+&lt;article&gt;Article content&lt;/article&gt;
+&lt;footer&gt;Footer Info&lt;/footer&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>6️⃣ Advanced: Media & Canvas</summary>
+    <ul>
+      <li><code class="def-term" data-term="audio">&lt;audio&gt;</code>, <code class="def-term" data-term="video">&lt;video&gt;</code>, <code class="def-term" data-term="picture">&lt;picture&gt;</code>, <code class="def-term" data-term="iframe">&lt;iframe&gt;</code>, <code class="def-term" data-term="canvas">&lt;canvas&gt;</code></li>
+    </ul>
+    <pre><code>&lt;audio controls&gt;
+  &lt;source src="song.mp3" type="audio/mpeg"&gt;
+  Your browser does not support the audio element.
+&lt;/audio&gt;
+
+&lt;video width="320" height="240" controls&gt;
+  &lt;source src="video.mp4" type="video/mp4"&gt;
+  Your browser does not support the video tag.
+&lt;/video&gt;
+
+&lt;picture&gt;
+  &lt;source srcset="hero.webp" type="image/webp"&gt;
+  &lt;img src="hero.jpg" alt="Hero image"&gt;
+&lt;/picture&gt;
+
+&lt;canvas id="c" width="300" height="150"&gt;Fallback content for canvas&lt;/canvas&gt;
+
+&lt;iframe src="https://example.com" width="300" height="200"&gt;&lt;/iframe&gt;</code></pre>
+  </details>
+
+  <!-- CSS Style Sections -->
+  <details>
+    <summary>7️⃣ CSS Beginner: Basic Styling</summary>
+    <ul>
+      <li><code class="def-term" data-term="color">color</code>, <code class="def-term" data-term="background-color">background-color</code>, <code class="def-term" data-term="font-size">font-size</code>, <code class="def-term" data-term="font-weight">font-weight</code></li>
+      <li><code class="def-term" data-term="text-align">text-align</code>, <code class="def-term" data-term="text-decoration">text-decoration</code>, <code class="def-term" data-term="margin">margin</code>, <code class="def-term" data-term="padding">padding</code></li>
+      <li><code class="def-term" data-term="style">&lt;style&gt;</code> tag and inline <code class="def-term" data-term="style">style</code> attribute</li>
+    </ul>
+    <pre><code>&lt;style&gt;
+  body { font-family: Arial, sans-serif; background-color: #f0f0f0; }
+  h1 { color: #333; text-align: center; }
+  p { color: #666; font-size: 16px; line-height: 1.6; }
+  .highlight { background-color: yellow; padding: 5px; }
+&lt;/style&gt;
+
+&lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;p&gt;This is a &lt;span class="highlight"&gt;styled&lt;/span&gt; paragraph.&lt;/p&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>8️⃣ CSS Intermediate: Selectors & Box Model</summary>
+    <ul>
+      <li>Element, class, ID selectors; attribute selectors</li>
+      <li><code class="def-term" data-term="border">&lt;border&gt;</code>, <code class="def-term" data-term="border-radius">border-radius</code>, <code class="def-term" data-term="box-shadow">box-shadow</code></li>
+      <li>Box model: <code class="def-term" data-term="width">width</code>, <code class="def-term" data-term="height">height</code>, <code class="def-term" data-term="margin">margin</code>, <code class="def-term" data-term="padding">padding</code>, <code class="def-term" data-term="border">border</code></li>
+    </ul>
+    <pre><code>&lt;style&gt;
+  * { box-sizing: border-box; }
+  #header { background: #2c3e50; color: white; padding: 20px; }
+  .button { background: #3498db; color: white; padding: 10px 20px; 
+           border: none; border-radius: 5px; cursor: pointer; }
+  input[type="text"] { border: 1px solid #ccc; padding: 8px; }
+&lt;/style&gt;
+
+&lt;div id="header"&gt;
+  &lt;button class="button"&gt;Click me&lt;/button&gt;
+  &lt;input type="text" placeholder="Enter text"&gt;
+&lt;/div&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>9️⃣ CSS Intermediate: Flexbox & Grid Basics</summary>
+    <ul>
+      <li><code class="def-term" data-term="display">display: flex</code>, <code class="def-term" data-term="justify-content">justify-content</code>, <code class="def-term" data-term="align-items">align-items</code></li>
+      <li><code class="def-term" data-term="display">display: grid</code>, <code class="def-term" data-term="grid-template-columns">grid-template-columns</code>, <code class="def-term" data-term="gap">gap</code></li>
+      <li>Responsive layouts with <code class="def-term" data-term="flex-wrap">flex-wrap</code> and media queries</li>
+    </ul>
+    <pre><code>&lt;style&gt;
+  .flex-container { display: flex; justify-content: space-between; gap: 10px; }
+  .flex-item { flex: 1; background: #ecf0f1; padding: 15px; }
+  
+  .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .grid-item { background: #3498db; color: white; padding: 20px; text-align: center; }
+&lt;/style&gt;
+
+&lt;div class="flex-container"&gt;
+  &lt;div class="flex-item"&gt;Flex 1&lt;/div&gt;
+  &lt;div class="flex-item"&gt;Flex 2&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="grid-container"&gt;
+  &lt;div class="grid-item"&gt;Grid 1&lt;/div&gt;
+  &lt;div class="grid-item"&gt;Grid 2&lt;/div&gt;
+  &lt;div class="grid-item"&gt;Grid 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>🔟 CSS Intermediate: Positioning & Display</summary>
+    <ul>
+      <li><code class="def-term" data-term="position">position: static, relative, absolute, fixed</code></li>
+      <li><code class="def-term" data-term="z-index">z-index</code>, <code class="def-term" data-term="top">top</code>, <code class="def-term" data-term="left">left</code>, <code class="def-term" data-term="right">right</code>, <code class="def-term" data-term="bottom">bottom</code></li>
+      <li><code class="def-term" data-term="display">display: block, inline, inline-block, none</code></li>
+    </ul>
+    <pre><code>&lt;style&gt;
+  .container { position: relative; height: 200px; background: #f9f9f9; }
+  .absolute-box { position: absolute; top: 20px; left: 20px; 
+                 background: #e74c3c; color: white; padding: 10px; }
+  .fixed-nav { position: fixed; top: 0; left: 0; right: 0; 
+              background: #2c3e50; z-index: 100; }
+  .inline-link { display: inline-block; margin: 5px; }
+&lt;/style&gt;
+
+&lt;div class="container"&gt;
+  &lt;div class="absolute-box"&gt;Absolute Positioned&lt;/div&gt;
+&lt;/div&gt;
+&lt;a href="#" class="inline-link"&gt;Link 1&lt;/a&gt;
+&lt;a href="#" class="inline-link"&gt;Link 2&lt;/a&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>1️⃣1️⃣ CSS Advanced: Transforms & Transitions</summary>
+    <ul>
+      <li><code class="def-term" data-term="transform">transform: translate, scale, rotate, skew</code></li>
+      <li><code class="def-term" data-term="transition">transition</code>, <code class="def-term" data-term="animation">animation</code>, <code class="def-term" data-term="keyframes">@keyframes</code></li>
+      <li>Hover effects and smooth animations</li>
+    </ul>
+    <pre><code>&lt;style&gt;
+  .box { width: 100px; height: 100px; background: #3498db; 
+         transition: all 0.3s ease; cursor: pointer; }
+  .box:hover { transform: scale(1.2) rotate(10deg); background: #e74c3c; }
+  
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(100px); } }
+  .slide-box { animation: slide 2s infinite alternate; background: #2ecc71; }
+&lt;/style&gt;
+
+&lt;div class="box"&gt;&lt;/div&gt;
+&lt;div class="slide-box"&gt;&lt;/div&gt;</code></pre>
+  </details>
+
+  <details>
+    <summary>1️⃣2️⃣ CSS Advanced: Gradients, Filters & Effects</summary>
+    <ul>
+      <li><code class="def-term" data-term="gradient">background: linear-gradient, radial-gradient</code></li>
+      <li><code class="def-term" data-term="filter">filter: blur, brightness, contrast, grayscale, shadow</code></li>
+      <li>Advanced text effects and pseudo-elements <code class="def-term" data-term="::before">::before</code>, <code class="def-term" data-term="::after">::after</code></li>
+    </ul>
+    <pre><code>&lt;style&gt;
+  .gradient-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                 color: white; padding: 40px; border-radius: 10px; }
+  .filtered-img { filter: blur(5px) brightness(1.1); transition: filter 0.3s; }
+  .filtered-img:hover { filter: blur(0) brightness(1); }
+  
+  .pseudo::before { content: "→ "; color: #e74c3c; font-weight: bold; }
+&lt;/style&gt;
+
+&lt;div class="gradient-box"&gt;Gradient Background&lt;/div&gt;
+&lt;img src="image.jpg" class="filtered-img" alt="Filtered image"&gt;
+&lt;p class="pseudo"&gt;Bullet text&lt;/p&gt;</code></pre>
+  </details>
+
+  <!-- Live Code Editor (UPDATED: Side by Side) -->
+  <div class="editor">
+    <h2>🧪 Try HTML Code</h2>
+    <div class="code-split-view">
+        <textarea id="htmlCode" placeholder="Write your HTML code here...">&lt;h2&gt;Hello Aman!&lt;/h2&gt;
+&lt;p&gt;This is your live preview.&lt;/p&gt;</textarea>
+        <iframe id="preview"></iframe>
+    </div>
+  </div>
+
+  <!-- Quiz Section -->
+  <div class="quiz">
+    <h2>🧠 HTML & CSS Quiz - Test Your Knowledge</h2>
+    <p style="font-size:14px;color:#666;">Choose your level and answer questions to test your understanding!</p>
+    
+    <!-- Level Selector -->
+    <div style="text-align:center;margin:15px 0;">
+      <button type="button" id="basicLevelBtn" style="padding:10px 20px;margin:5px;background:#4caf50;color:white;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:bold;">🟢 Basic Level</button>
+      <button type="button" id="midLevelBtn" style="padding:10px 20px;margin:5px;background:#ff9800;color:white;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:bold;">🟡 Intermediate Level</button>
+      <button type="button" id="advancedLevelBtn" style="padding:10px 20px;margin:5px;background:#f44336;color:white;border:none;border-radius:5px;cursor:pointer;font-size:14px;font-weight:bold;">🔴 Advanced Level</button>
+    </div>
+
+    <form id="quizForm">
+      <!-- BASIC LEVEL QUESTIONS (Q1-Q10) -->
+      <div id="basicLevel" class="quizLevel" style="display:none;">
+        <h3 style="color:#4caf50;border-bottom:2px solid #4caf50;padding-bottom:10px;">🟢 Basic Level (HTML Fundamentals)</h3>
+
+        <div class="quiz-question">
+          <p><strong>1.</strong> What does &lt;br&gt; do?</p>
+          <label><input type="radio" name="q1" value="a" /> Creates a new paragraph</label>
+          <label><input type="radio" name="q1" value="b" /> Inserts a line break</label>
+          <label><input type="radio" name="q1" value="c" /> Makes text bold</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>2.</strong> What is the correct HTML structure starting element?</p>
+          <label><input type="radio" name="q2" value="a" /> &lt;body&gt;</label>
+          <label><input type="radio" name="q2" value="b" /> &lt;!DOCTYPE html&gt;</label>
+          <label><input type="radio" name="q2" value="c" /> &lt;head&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>3.</strong> Which tag defines a hyperlink?</p>
+          <label><input type="radio" name="q3" value="a" /> &lt;link&gt;</label>
+          <label><input type="radio" name="q3" value="b" /> &lt;a&gt;</label>
+          <label><input type="radio" name="q3" value="c" /> &lt;url&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>4.</strong> What attribute specifies image source?</p>
+          <label><input type="radio" name="q4" value="a" /> href</label>
+          <label><input type="radio" name="q4" value="b" /> src</label>
+          <label><input type="radio" name="q4" value="c" /> link</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>5.</strong> Which element represents a semantic heading?</p>
+          <label><input type="radio" name="q5" value="a" /> &lt;header&gt;</label>
+          <label><input type="radio" name="q5" value="b" /> &lt;h1&gt;</label>
+          <label><input type="radio" name="q5" value="c" /> &lt;head&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>6.</strong> What does &lt;strong&gt; tag do?</p>
+          <label><input type="radio" name="q6" value="a" /> Makes text italic</label>
+          <label><input type="radio" name="q6" value="b" /> Marks text as important (bold)</label>
+          <label><input type="radio" name="q6" value="c" /> Creates a line break</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>7.</strong> Which tag is used for unordered lists?</p>
+          <label><input type="radio" name="q7" value="a" /> &lt;li&gt;</label>
+          <label><input type="radio" name="q7" value="b" /> &lt;ol&gt;</label>
+          <label><input type="radio" name="q7" value="c" /> &lt;ul&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>8.</strong> What is the purpose of &lt;table&gt; tag?</p>
+          <label><input type="radio" name="q8" value="a" /> Organize data into rows and columns</label>
+          <label><input type="radio" name="q8" value="b" /> Create a form</label>
+          <label><input type="radio" name="q8" value="c" /> Define a section</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>9.</strong> What does the &lt;form&gt; element do?</p>
+          <label><input type="radio" name="q9" value="a" /> Creates a container for user input</label>
+          <label><input type="radio" name="q9" value="b" /> Displays images</label>
+          <label><input type="radio" name="q9" value="c" /> Defines navigation</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>10.</strong> Which attribute associates a label with an input?</p>
+          <label><input type="radio" name="q10" value="a" /> id</label>
+          <label><input type="radio" name="q10" value="b" /> for</label>
+          <label><input type="radio" name="q10" value="c" /> name</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>11.</strong> What does &lt;em&gt; tag do?</p>
+          <label><input type="radio" name="q11" value="a" /> Makes text bold</label>
+          <label><input type="radio" name="q11" value="b" /> Emphasizes text (italic)</label>
+          <label><input type="radio" name="q11" value="c" /> Creates a line break</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>12.</strong> Which element represents the root of an HTML document?</p>
+          <label><input type="radio" name="q12" value="a" /> &lt;body&gt;</label>
+          <label><input type="radio" name="q12" value="b" /> &lt;html&gt;</label>
+          <label><input type="radio" name="q12" value="c" /> &lt;head&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>13.</strong> What is the &lt;meta&gt; tag used for?</p>
+          <label><input type="radio" name="q13" value="a" /> Define metadata about HTML document</label>
+          <label><input type="radio" name="q13" value="b" /> Create hyperlinks</label>
+          <label><input type="radio" name="q13" value="c" /> Display images</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>14.</strong> Which tag defines the main heading?</p>
+          <label><input type="radio" name="q14" value="a" /> &lt;h6&gt;</label>
+          <label><input type="radio" name="q14" value="b" /> &lt;h1&gt;</label>
+          <label><input type="radio" name="q14" value="c" /> &lt;heading&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>15.</strong> What does &lt;small&gt; tag do?</p>
+          <label><input type="radio" name="q15" value="a" /> Makes text smaller and secondary</label>
+          <label><input type="radio" name="q15" value="b" /> Creates a paragraph</label>
+          <label><input type="radio" name="q15" value="c" /> Defines a section</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>16.</strong> What element is used for ordered lists?</p>
+          <label><input type="radio" name="q16" value="a" /> &lt;ul&gt;</label>
+          <label><input type="radio" name="q16" value="b" /> &lt;li&gt;</label>
+          <label><input type="radio" name="q16" value="c" /> &lt;ol&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>17.</strong> What is &lt;div&gt; used for?</p>
+          <label><input type="radio" name="q17" value="a" /> Display images</label>
+          <label><input type="radio" name="q17" value="b" /> Container for grouping content</label>
+          <label><input type="radio" name="q17" value="c" /> Create forms</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>18.</strong> What does &lt;span&gt; do?</p>
+          <label><input type="radio" name="q18" value="a" /> Creates a line break</label>
+          <label><input type="radio" name="q18" value="b" /> Inline container for text styling</label>
+          <label><input type="radio" name="q18" value="c" /> Defines a heading</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>19.</strong> What is the &lt;img&gt; tag's most important attribute?</p>
+          <label><input type="radio" name="q19" value="a" /> alt</label>
+          <label><input type="radio" name="q19" value="b" /> src</label>
+          <label><input type="radio" name="q19" value="c" /> title</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>20.</strong> Which element contains metadata and links to stylesheets?</p>
+          <label><input type="radio" name="q20" value="a" /> &lt;title&gt;</label>
+          <label><input type="radio" name="q20" value="b" /> &lt;head&gt;</label>
+          <label><input type="radio" name="q20" value="c" /> &lt;body&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>21.</strong> What is the purpose of &lt;input&gt; tag?</p>
+          <label><input type="radio" name="q21" value="a" /> Collect user input data</label>
+          <label><input type="radio" name="q21" value="b" /> Display text</label>
+          <label><input type="radio" name="q21" value="c" /> Create navigation</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>22.</strong> What does &lt;button&gt; tag do?</p>
+          <label><input type="radio" name="q22" value="a" /> Create clickable button</label>
+          <label><input type="radio" name="q22" value="b" /> Define text</label>
+          <label><input type="radio" name="q22" value="c" /> Create links</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>23.</strong> What is &lt;textarea&gt; used for?</p>
+          <label><input type="radio" name="q23" value="a" /> Single-line text input</label>
+          <label><input type="radio" name="q23" value="b" /> Multi-line text input</label>
+          <label><input type="radio" name="q23" value="c" /> Password field</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>24.</strong> What does the &lt;select&gt; tag create?</p>
+          <label><input type="radio" name="q24" value="a" /> Text input</label>
+          <label><input type="radio" name="q24" value="b" /> Dropdown list</label>
+          <label><input type="radio" name="q24" value="c" /> Button</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>25.</strong> What is &lt;table&gt; row element called?</p>
+          <label><input type="radio" name="q25" value="a" /> &lt;td&gt;</label>
+          <label><input type="radio" name="q25" value="b" /> &lt;tr&gt;</label>
+          <label><input type="radio" name="q25" value="c" /> &lt;table&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>26.</strong> What element embeds external resources?</p>
+          <label><input type="radio" name="q26" value="a" /> &lt;link&gt;</label>
+          <label><input type="radio" name="q26" value="b" /> &lt;embed&gt;</label>
+          <label><input type="radio" name="q26" value="c" /> &lt;script&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>27.</strong> What does &lt;code&gt; tag represent?</p>
+          <label><input type="radio" name="q27" value="a" /> Computer code formatting</label>
+          <label><input type="radio" name="q27" value="b" /> Bold text</label>
+          <label><input type="radio" name="q27" value="c" /> Italic text</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>28.</strong> Which tag is used for preformatted text?</p>
+          <label><input type="radio" name="q28" value="a" /> &lt;pre&gt;</label>
+          <label><input type="radio" name="q28" value="b" /> &lt;p&gt;</label>
+          <label><input type="radio" name="q28" value="c" /> &lt;code&gt;</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>29.</strong> What does &lt;blockquote&gt; element do?</p>
+          <label><input type="radio" name="q29" value="a" /> Creates italic text</label>
+          <label><input type="radio" name="q29" value="b" /> Indicates quoted section</label>
+          <label><input type="radio" name="q29" value="c" /> Creates a link</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>30.</strong> What is the alt attribute for in &lt;img&gt;?</p>
+          <label><input type="radio" name="q30" value="a" /> Provide alternative text if image fails</label>
+          <label><input type="radio" name="q30" value="b" /> Change image size</label>
+          <label><input type="radio" name="q30" value="c" /> Add border to image</label>
+        </div>
+      </div>
+
+      <!-- INTERMEDIATE LEVEL QUESTIONS (Q1-Q30) -->
+      <div id="midLevel" class="quizLevel" style="display:none;">
+        <h3 style="color:#ff9800;border-bottom:2px solid #ff9800;padding-bottom:10px;">🟡 Intermediate Level (HTML & CSS Basics)</h3>
+
+        <div class="quiz-question">
+          <p><strong>1.</strong> What does &lt;meta charset="utf-8"&gt; specify?</p>
+          <label><input type="radio" name="q31" value="a" /> Character encoding</label>
+          <label><input type="radio" name="q31" value="b" /> Page title</label>
+          <label><input type="radio" name="q31" value="c" /> Viewport size</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>2.</strong> Which CSS property controls text color?</p>
+          <label><input type="radio" name="q32" value="a" /> background-color</label>
+          <label><input type="radio" name="q32" value="b" /> color</label>
+          <label><input type="radio" name="q32" value="c" /> text-color</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>3.</strong> What does CSS Flexbox do?</p>
+          <label><input type="radio" name="q33" value="a" /> Creates animations</label>
+          <label><input type="radio" name="q33" value="b" /> Arranges items in flexible rows/columns</label>
+          <label><input type="radio" name="q33" value="c" /> Applies filters</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>4.</strong> Which CSS property adds space inside an element?</p>
+          <label><input type="radio" name="q34" value="a" /> margin</label>
+          <label><input type="radio" name="q34" value="b" /> padding</label>
+          <label><input type="radio" name="q34" value="c" /> border</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>5.</strong> What does display: grid do?</p>
+          <label><input type="radio" name="q35" value="a" /> Creates 2D layouts with rows and columns</label>
+          <label><input type="radio" name="q35" value="b" /> Makes element invisible</label>
+          <label><input type="radio" name="q35" value="c" /> Adds a border</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>6.</strong> Which attribute specifies where form data is sent?</p>
+          <label><input type="radio" name="q36" value="a" /> method</label>
+          <label><input type="radio" name="q36" value="b" /> action</label>
+          <label><input type="radio" name="q36" value="c" /> target</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>7.</strong> What does &lt;nav&gt; element represent?</p>
+          <label><input type="radio" name="q37" value="a" /> Navigation section</label>
+          <label><input type="radio" name="q37" value="b" /> A paragraph</label>
+          <label><input type="radio" name="q37" value="c" /> A form</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>8.</strong> Which CSS property controls element width?</p>
+          <label><input type="radio" name="q38" value="a" /> size</label>
+          <label><input type="radio" name="q38" value="b" /> width</label>
+          <label><input type="radio" name="q38" value="c" /> length</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>9.</strong> What does the &lt;header&gt; semantic element represent?</p>
+          <label><input type="radio" name="q39" value="a" /> The top section of page or section</label>
+          <label><input type="radio" name="q39" value="b" /> A title</label>
+          <label><input type="radio" name="q39" value="c" /> A heading tag</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>10.</strong> Which CSS property sets background color?</p>
+          <label><input type="radio" name="q40" value="a" /> bg-color</label>
+          <label><input type="radio" name="q40" value="b" /> background-color</label>
+          <label><input type="radio" name="q40" value="c" /> backcolor</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>11.</strong> What does &lt;footer&gt; element represent?</p>
+          <label><input type="radio" name="q41" value="a" /> The bottom section of page or section</label>
+          <label><input type="radio" name="q41" value="b" /> A paragraph</label>
+          <label><input type="radio" name="q41" value="c" /> A division</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>12.</strong> Which CSS selector targets element with id "main"?</p>
+          <label><input type="radio" name="q42" value="a" /> .main</label>
+          <label><input type="radio" name="q42" value="b" /> #main</label>
+          <label><input type="radio" name="q42" value="c" /> main</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>13.</strong> What does margin: 0 auto do?</p>
+          <label><input type="radio" name="q43" value="a" /> Centers element horizontally</label>
+          <label><input type="radio" name="q43" value="b" /> Removes margins</label>
+          <label><input type="radio" name="q43" value="c" /> Adds automatic spacing</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>14.</strong> What is &lt;section&gt; used for?</p>
+          <label><input type="radio" name="q44" value="a" /> Define standalone content section</label>
+          <label><input type="radio" name="q44" value="b" /> Create a form</label>
+          <label><input type="radio" name="q44" value="c" /> Embed media</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>15.</strong> Which CSS property changes font size?</p>
+          <label><input type="radio" name="q45" value="a" /> text-size</label>
+          <label><input type="radio" name="q45" value="b" /> font-size</label>
+          <label><input type="radio" name="q45" value="c" /> size</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>16.</strong> What does &lt;aside&gt; element represent?</p>
+          <label><input type="radio" name="q46" value="a" /> Sidebar or related content</label>
+          <label><input type="radio" name="q46" value="b" /> A section</label>
+          <label><input type="radio" name="q46" value="c" /> A division</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>17.</strong> Which CSS value makes element take full width?</p>
+          <label><input type="radio" name="q47" value="a" /> 100%</label>
+          <label><input type="radio" name="q47" value="b" /> full</label>
+          <label><input type="radio" name="q47" value="c" /> auto</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>18.</strong> What is the correct order of box model?</p>
+          <label><input type="radio" name="q48" value="a" /> Content, border, padding, margin</label>
+          <label><input type="radio" name="q48" value="b" /> Content, padding, border, margin</label>
+          <label><input type="radio" name="q48" value="c" /> Margin, border, padding, content</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>19.</strong> What does opacity property control?</p>
+          <label><input type="radio" name="q49" value="a" /> Element transparency</label>
+          <label><input type="radio" name="q49" value="b" /> Element shadow</label>
+          <label><input type="radio" name="q49" value="c" /> Element size</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>20.</strong> Which property hides overflow content?</p>
+          <label><input type="radio" name="q50" value="a" /> hidden</label>
+          <label><input type="radio" name="q50" value="b" /> overflow: hidden</label>
+          <label><input type="radio" name="q50" value="c" /> display: none</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>21.</strong> What does cursor: pointer do?</p>
+          <label><input type="radio" name="q51" value="a" /> Changes cursor to hand pointer</label>
+          <label><input type="radio" name="q51" value="b" /> Moves element</label>
+          <label><input type="radio" name="q51" value="c" /> Creates a link</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>22.</strong> Which pseudo-class represents hovered state?</p>
+          <label><input type="radio" name="q52" value="a" /> :active</label>
+          <label><input type="radio" name="q52" value="b" /> :hover</label>
+          <label><input type="radio" name="q52" value="c" /> :focus</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>23.</strong> What is CSS specificity?</p>
+          <label><input type="radio" name="q53" value="a" /> How specific your HTML is</label>
+          <label><input type="radio" name="q53" value="b" /> How CSS rules are weighted/prioritized</label>
+          <label><input type="radio" name="q53" value="c" /> Number of selectors</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>24.</strong> Which has higher specificity, class or element?</p>
+          <label><input type="radio" name="q54" value="a" /> Element</label>
+          <label><input type="radio" name="q54" value="b" /> Class</label>
+          <label><input type="radio" name="q54" value="c" /> They're equal</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>25.</strong> What does &lt;article&gt; represent?</p>
+          <label><input type="radio" name="q55" value="a" /> Any content section</label>
+          <label><input type="radio" name="q55" value="b" /> Self-contained content like blog post</label>
+          <label><input type="radio" name="q55" value="c" /> A division</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>26.</strong> What does justify-content do in Flexbox?</p>
+          <label><input type="radio" name="q56" value="a" /> Aligns items horizontally</label>
+          <label><input type="radio" name="q56" value="b" /> Aligns items vertically</label>
+          <label><input type="radio" name="q56" value="c" /> Centers text</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>27.</strong> What does align-items do in Flexbox?</p>
+          <label><input type="radio" name="q57" value="a" /> Aligns items horizontally</label>
+          <label><input type="radio" name="q57" value="b" /> Aligns items vertically</label>
+          <label><input type="radio" name="q57" value="c" /> Distributes space</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>28.</strong> What does flex-direction: column do?</p>
+          <label><input type="radio" name="q58" value="a" /> Displays items in row</label>
+          <label><input type="radio" name="q58" value="b" /> Displays items in column</label>
+          <label><input type="radio" name="q58" value="c" /> Wraps items</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>29.</strong> Which property creates space around elements?</p>
+          <label><input type="radio" name="q59" value="a" /> padding</label>
+          <label><input type="radio" name="q59" value="b" /> margin</label>
+          <label><input type="radio" name="q59" value="c" /> border</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>30.</strong> What does border-collapse do in tables?</p>
+          <label><input type="radio" name="q60" value="a" /> Collapses table borders into one</label>
+          <label><input type="radio" name="q60" value="b" /> Hides borders</label>
+          <label><input type="radio" name="q60" value="c" /> Adds shadows to borders</label>
+        </div>
+      </div>
+
+      <!-- ADVANCED LEVEL QUESTIONS (Q1-Q30) -->
+      <div id="advancedLevel" class="quizLevel" style="display:none;">
+        <h3 style="color:#f44336;border-bottom:2px solid #f44336;padding-bottom:10px;">🔴 Advanced Level (CSS & Animations)</h3>
+
+        <div class="quiz-question">
+          <p><strong>1.</strong> What does border-radius do?</p>
+          <label><input type="radio" name="q61" value="a" /> Rounds corners</label>
+          <label><input type="radio" name="q61" value="b" /> Adds shadow</label>
+          <label><input type="radio" name="q61" value="c" /> Changes color</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>2.</strong> What does transform: rotate() do?</p>
+          <label><input type="radio" name="q62" value="a" /> Moves element</label>
+          <label><input type="radio" name="q62" value="b" /> Rotates element by degrees</label>
+          <label><input type="radio" name="q62" value="c" /> Changes size</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>3.</strong> What does the @media query do?</p>
+          <label><input type="radio" name="q63" value="a" /> Embeds media files</label>
+          <label><input type="radio" name="q63" value="b" /> Applies CSS based on conditions (responsive)</label>
+          <label><input type="radio" name="q63" value="c" /> Creates media player</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>4.</strong> What does transform: scale() do?</p>
+          <label><input type="radio" name="q64" value="a" /> Changes element size</label>
+          <label><input type="radio" name="q64" value="b" /> Creates a shadow</label>
+          <label><input type="radio" name="q64" value="c" /> Adds animation</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>5.</strong> What does transition property do?</p>
+          <label><input type="radio" name="q65" value="a" /> Creates smooth animation between states</label>
+          <label><input type="radio" name="q65" value="b" /> Changes element display</label>
+          <label><input type="radio" name="q65" value="c" /> Adds filters</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>6.</strong> What does @keyframes define?</p>
+          <label><input type="radio" name="q66" value="a" /> CSS animations frames</label>
+          <label><input type="radio" name="q66" value="b" /> Media queries</label>
+          <label><input type="radio" name="q66" value="c" /> Font imports</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>7.</strong> What does animation-duration specify?</p>
+          <label><input type="radio" name="q67" value="a" /> How long animation lasts</label>
+          <label><input type="radio" name="q67" value="b" /> Animation delay</label>
+          <label><input type="radio" name="q67" value="c" /> Animation direction</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>8.</strong> What does filter: blur() do?</p>
+          <label><input type="radio" name="q68" value="a" /> Blurs element</label>
+          <label><input type="radio" name="q68" value="b" /> Creates shadow</label>
+          <label><input type="radio" name="q68" value="c" /> Rotates element</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>9.</strong> What does background-gradient create?</p>
+          <label><input type="radio" name="q69" value="a" /> Solid background</label>
+          <label><input type="radio" name="q69" value="b" /> Gradual color transition</label>
+          <label><input type="radio" name="q69" value="c" /> Animated background</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>10.</strong> What does ::before pseudo-element do?</p>
+          <label><input type="radio" name="q70" value="a" /> Adds content before element</label>
+          <label><input type="radio" name="q70" value="b" /> Adds content after element</label>
+          <label><input type="radio" name="q70" value="c" /> Hides element</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>11.</strong> What does ::after pseudo-element do?</p>
+          <label><input type="radio" name="q71" value="a" /> Adds content before element</label>
+          <label><input type="radio" name="q71" value="b" /> Adds content after element</label>
+          <label><input type="radio" name="q71" value="c" /> Creates animation</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>12.</strong> What does position: absolute do?</p>
+          <label><input type="radio" name="q72" value="a" /> Positions relative to viewport</label>
+          <label><input type="radio" name="q72" value="b" /> Positions relative to nearest positioned ancestor</label>
+          <label><input type="radio" name="q72" value="c" /> Positions relative to document</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>13.</strong> What does position: fixed do?</p>
+          <label><input type="radio" name="q73" value="a" /> Removes element from flow</label>
+          <label><input type="radio" name="q73" value="b" /> Fixes element to viewport</label>
+          <label><input type="radio" name="q73" value="c" /> Centers element</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>14.</strong> What does z-index property control?</p>
+          <label><input type="radio" name="q74" value="a" /> Element stacking order</label>
+          <label><input type="radio" name="q74" value="b" /> Element depth</label>
+          <label><input type="radio" name="q74" value="c" /> Layer height</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>15.</strong> What does filter: brightness() do?</p>
+          <label><input type="radio" name="q75" value="a" /> Changes element brightness</label>
+          <label><input type="radio" name="q75" value="b" /> Adds glow effect</label>
+          <label><input type="radio" name="q75" value="c" /> Adds shadow</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>16.</strong> What does filter: grayscale() do?</p>
+          <label><input type="radio" name="q76" value="a" /> Removes all colors (black/white)</label>
+          <label><input type="radio" name="q76" value="b" /> Adds gray background</label>
+          <label><input type="radio" name="q76" value="c" /> Creates shadow</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>17.</strong> What does filter: hue-rotate() do?</p>
+          <label><input type="radio" name="q77" value="a" /> Changes color tones</label>
+          <label><input type="radio" name="q77" value="b" /> Rotates element</label>
+          <label><input type="radio" name="q77" value="c" /> Adds animation</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>18.</strong> What does text-shadow property do?</p>
+          <label><input type="radio" name="q78" value="a" /> Adds shadow to text</label>
+          <label><input type="radio" name="q78" value="b" /> Adds shadow to box</label>
+          <label><input type="radio" name="q78" value="c" /> Changes text color</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>19.</strong> What does clip-path property do?</p>
+          <label><input type="radio" name="q79" value="a" /> Clips element to defined shape</label>
+          <label><input type="radio" name="q79" value="b" /> Hides element</label>
+          <label><input type="radio" name="q79" value="c" /> Creates animation</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>20.</strong> What does perspective property do?</p>
+          <label><input type="radio" name="q80" value="a" /> Adds 3D depth effect</label>
+          <label><input type="radio" name="q80" value="b" /> Changes opacity</label>
+          <label><input type="radio" name="q80" value="c" /> Rotates element</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>21.</strong> What does backface-visibility do?</p>
+          <label><input type="radio" name="q81" value="a" /> Controls if element back is visible in 3D</label>
+          <label><input type="radio" name="q81" value="b" /> Hides element</label>
+          <label><input type="radio" name="q81" value="c" /> Adds effect</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>22.</strong> What does transform: translateX() do?</p>
+          <label><input type="radio" name="q82" value="a" /> Moves element horizontally</label>
+          <label><input type="radio" name="q82" value="b" /> Moves element vertically</label>
+          <label><input type="radio" name="q82" value="c" /> Changes size</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>23.</strong> What does transform: skew() do?</p>
+          <label><input type="radio" name="q83" value="a" /> Skews/distorts element</label>
+          <label><input type="radio" name="q83" value="b" /> Rotates element</label>
+          <label><input type="radio" name="q83" value="c" /> Changes opacity</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>24.</strong> What does animation-timing-function do?</p>
+          <label><input type="radio" name="q84" value="a" /> Controls animation speed curve</label>
+          <label><input type="radio" name="q84" value="b" /> Sets animation duration</label>
+          <label><input type="radio" name="q84" value="c" /> Defines animation frames</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>25.</strong> What does flex-wrap: wrap do?</p>
+          <label><input type="radio" name="q85" value="a" /> Wraps flex items to next line</label>
+          <label><input type="radio" name="q85" value="b" /> Prevents wrapping</label>
+          <label><input type="radio" name="q85" value="c" /> Centers items</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>26.</strong> What does gap property do in Grid?</p>
+          <label><input type="radio" name="q86" value="a" /> Creates space between grid items</label>
+          <label><input type="radio" name="q86" value="b" /> Creates space between borders</label>
+          <label><input type="radio" name="q86" value="c" /> Creates padding</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>27.</strong> What does grid-template-columns do?</p>
+          <label><input type="radio" name="q87" value="a" /> Defines number and size of columns</label>
+          <label><input type="radio" name="q87" value="b" /> Defines rows</label>
+          <label><input type="radio" name="q87" value="c" /> Defines gap</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>28.</strong> What does mix-blend-mode do?</p>
+          <label><input type="radio" name="q88" value="a" /> Controls how element blends with background</label>
+          <label><input type="radio" name="q88" value="b" /> Adds animation</label>
+          <label><input type="radio" name="q88" value="c" /> Creates shadow</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>29.</strong> What does will-change property do?</p>
+          <label><input type="radio" name="q89" value="a" /> Optimizes element before animation</label>
+          <label><input type="radio" name="q89" value="b" /> Changes element immediately</label>
+          <label><input type="radio" name="q89" value="c" /> Removes element</label>
+        </div>
+
+        <div class="quiz-question">
+          <p><strong>30.</strong> What does calc() function allow in CSS?</p>
+          <label><input type="radio" name="q90" value="a" /> Performs mathematical calculations for values</label>
+          <label><input type="radio" name="q90" value="b" /> Calculates animation duration</label>
+          <label><input type="radio" name="q90" value="c" /> Counts elements</label>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin:20px 0;">
+        <button type="button" id="submitQuizBtn" style="padding:10px 25px;margin-top:10px;background:#2196F3;color:white;border:none;border-radius:5px;cursor:pointer;font-size:16px;font-weight:bold;">✓ Check Answers</button>
+      </div>
+      <div id="quizResults" style="margin-top:15px;font-weight:bold;"></div>
+    </form>
+  </div>
+
+  <script>
+    // Toggle all <details> open/closed
+    function toggleAllSections() {
+      const details = document.querySelectorAll('details');
+      if (!details.length) return;
+      const allOpen = Array.from(details).every(d => d.hasAttribute('open'));
+      details.forEach(d => {
+        if (allOpen) d.removeAttribute('open'); else d.setAttribute('open', '');
+      });
+    }
+
+    // Toggle dark mode
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      updatePreview();
+    }
+
+    // Check quiz answer
+    // Quiz answers: question -> correct answer
+    const quizAnswers = {
+      'q1': 'b', 'q2': 'b', 'q3': 'b', 'q4': 'b', 'q5': 'b',
+      'q6': 'b', 'q7': 'c', 'q8': 'a', 'q9': 'a', 'q10': 'b',
+      'q11': 'b', 'q12': 'b', 'q13': 'b', 'q14': 'b', 'q15': 'b',
+      'q16': 'c', 'q17': 'b', 'q18': 'b', 'q19': 'b', 'q20': 'b',
+      'q21': 'a', 'q22': 'a', 'q23': 'b', 'q24': 'b', 'q25': 'a',
+      'q26': 'b', 'q27': 'a', 'q28': 'a', 'q29': 'b', 'q30': 'a',
+      'q31': 'a', 'q32': 'b', 'q33': 'b', 'q34': 'b', 'q35': 'a',
+      'q36': 'b', 'q37': 'a', 'q38': 'b', 'q39': 'a', 'q40': 'b',
+      'q41': 'a', 'q42': 'b', 'q43': 'a', 'q44': 'a', 'q45': 'b',
+      'q46': 'a', 'q47': 'a', 'q48': 'b', 'q49': 'a', 'q50': 'b',
+      'q51': 'a', 'q52': 'b', 'q53': 'b', 'q54': 'b', 'q55': 'b',
+      'q56': 'a', 'q57': 'b', 'q58': 'b', 'q59': 'b', 'q60': 'a',
+      'q61': 'a', 'q62': 'b', 'q63': 'b', 'q64': 'a', 'q65': 'a',
+      'q66': 'a', 'q67': 'a', 'q68': 'a', 'q69': 'b', 'q70': 'a',
+      'q71': 'b', 'q72': 'b', 'q73': 'b', 'q74': 'a', 'q75': 'a',
+      'q76': 'a', 'q77': 'a', 'q78': 'a', 'q79': 'a', 'q80': 'a',
+      'q81': 'a', 'q82': 'a', 'q83': 'a', 'q84': 'a', 'q85': 'a',
+      'q86': 'a', 'q87': 'a', 'q88': 'a', 'q89': 'a', 'q90': 'a'
+    };
+
+    const correctAnswerExplanations = {
+      'q1': 'The &lt;br&gt; tag creates a line break without adding extra vertical space like paragraphs do.',
+      'q2': '&lt;!DOCTYPE html&gt; is required at the very beginning to tell browsers this is HTML5.',
+      'q3': 'The &lt;a&gt; tag creates hyperlinks with the href attribute pointing to the destination URL.',
+      'q4': 'The src attribute specifies the image file path or URL for the &lt;img&gt; tag.',
+      'q5': '&lt;h1&gt; is a semantic heading tag; &lt;header&gt; is a section container, not a heading.',
+      'q6': '&lt;strong&gt; emphasizes text as important and displays it bold; semantic meaning matters.',
+      'q7': '&lt;ul&gt; creates an unordered list with bullet points; &lt;ol&gt; is for ordered lists.',
+      'q8': '&lt;table&gt; organizes data into a grid structure with rows (&lt;tr&gt;) and columns (&lt;td&gt;).',
+      'q9': '&lt;form&gt; is a container that groups input elements and handles user data submission.',
+      'q10': 'The "for" attribute in &lt;label&gt; links to an input\'s id, improving accessibility and usability.',
+      'q11': '&lt;em&gt; emphasizes text with italic styling; semantic markup for emphasis.',
+      'q12': '&lt;html&gt; is the root element that wraps all other HTML content on the page.',
+      'q13': '&lt;meta&gt; provides metadata about the document like charset, viewport, and keywords.',
+      'q14': '&lt;h1&gt; is the main heading (largest); &lt;h2&gt;-&lt;h6&gt; are subheadings in order.',
+      'q15': '&lt;small&gt; represents secondary content or fine print; semantically different from generic text.',
+      'q16': '&lt;ol&gt; creates an ordered list with numbers; &lt;ul&gt; is for unordered (bullet) lists.',
+      'q17': '&lt;div&gt; is a generic block container used to group content for styling or structure.',
+      'q18': '&lt;span&gt; is an inline container for styling specific text without breaking the flow.',
+      'q19': 'src is essential - it specifies which image file to load; alt, href, and title are for other elements.',
+      'q20': '&lt;head&gt; contains metadata, links to CSS files, scripts, and the page title; not displayed on page.',
+      'q21': '&lt;input&gt; collects user data like text, passwords, checkboxes, and radio buttons.',
+      'q22': '&lt;button&gt; creates a clickable button for forms or scripting interactions.',
+      'q23': '&lt;textarea&gt; allows multi-line text input; &lt;input type="text"&gt; is single-line only.',
+      'q24': '&lt;select&gt; creates a dropdown menu with &lt;option&gt; children for user selection.',
+      'q25': '&lt;tr&gt; defines a table row; &lt;td&gt; defines cells within the row.',
+      'q26': '&lt;link&gt; embeds external resources like CSS stylesheets; &lt;embed&gt; and &lt;script&gt; are different.',
+      'q27': '&lt;code&gt; displays text as computer code with monospace font formatting.',
+      'q28': '&lt;pre&gt; preserves preformatted text including whitespace and line breaks exactly as written.',
+      'q29': '&lt;blockquote&gt; represents a quote from another source; browsers indent it semantically.',
+      'q30': 'The alt attribute provides text description if image fails to load or for screen readers.',
+      'q31': 'charset="utf-8" specifies UTF-8 character encoding, supporting all international characters.',
+      'q32': 'color property changes text color; background-color changes background; text-color doesn\'t exist.',
+      'q33': 'Flexbox arranges items in flexible rows or columns, auto-sizing based on available space.',
+      'q34': 'padding creates space inside an element; margin creates space outside (between elements).',
+      'q35': 'display: grid creates a 2D layout with explicit rows and columns for precise positioning.',
+      'q36': 'action attribute specifies the URL where form data is submitted; method specifies GET or POST.',
+      'q37': '&lt;nav&gt; is a semantic element for navigation sections like menus and links.',
+      'q38': 'width property controls element width; size is a tag attribute, not a CSS property.',
+      'q39': '&lt;header&gt; represents the header section of a page or &lt;article&gt;, not a heading.',
+      'q40': 'background-color sets the background; bg-color and backcolor are not valid CSS properties.',
+      'q41': '&lt;footer&gt; represents the footer section of a page or &lt;article&gt;.',
+      'q42': '#main selects an element with id="main"; .main selects class name.',
+      'q43': 'margin: 0 auto removes vertical margins and centers the element horizontally.',
+      'q44': '&lt;section&gt; defines a standalone section of content with a theme.',
+      'q45': 'font-size changes text size; text-size and size are not valid CSS properties.',
+      'q46': '&lt;aside&gt; represents sidebar or tangentially related content to the main content.',
+      'q47': 'width: 100% makes element take full width of its container.',
+      'q48': 'From inside-out: Content, padding, border, margin is the correct box model order.',
+      'q49': 'opacity controls transparency: 0 = invisible, 1 = fully opaque, 0.5 = 50% transparent.',
+      'q50': 'overflow: hidden clips content that exceeds the element\'s boundaries.',
+      'q51': 'cursor: pointer changes the cursor to a hand icon, indicating clickability.',
+      'q52': ':hover pseudo-class applies styles when user hovers over an element.',
+      'q53': 'Specificity determines which CSS rules take priority based on selector types and weight.',
+      'q54': 'Classes have higher specificity than element selectors; IDs have even higher specificity.',
+      'q55': '&lt;article&gt; represents self-contained content like blog posts or news articles.',
+      'q56': 'justify-content aligns flex items horizontally along the main axis.',
+      'q57': 'align-items aligns flex items vertically along the cross axis.',
+      'q58': 'flex-direction: column stacks items vertically instead of horizontally (which is default).',
+      'q59': 'margin creates space around elements outside the border; padding is inside.',
+      'q60': 'border-collapse: collapse merges adjacent table borders into one instead of separate borders.',
+      'q61': 'border-radius creates rounded corners; values in px or %.',
+      'q62': 'transform: rotate() rotates an element by specified degrees (e.g., rotate(45deg)).',
+      'q63': '@media queries apply CSS based on conditions like screen width for responsive design.',
+      'q64': 'transform: scale() resizes an element; scale(1.5) = 150%, scale(0.5) = 50%.',
+      'q65': 'transition creates smooth animation between CSS property changes over specified duration.',
+      'q66': '@keyframes defines animation steps; used with animation property to create sequences.',
+      'q67': 'animation-duration specifies how long an animation takes to complete (e.g., 2s, 500ms).',
+      'q68': 'filter: blur() blurs elements; blur(5px) is more blurred than blur(2px).',
+      'q69': 'Linear or radial gradients create smooth color transitions across an element\'s background.',
+      'q70': '::before pseudo-element inserts content before an element\'s existing content.',
+      'q71': '::after pseudo-element inserts content after an element\'s existing content.',
+      'q72': 'position: absolute positions element relative to nearest positioned ancestor or document.',
+      'q73': 'position: fixed fixes element to viewport; scrolling doesn\'t move it.',
+      'q74': 'z-index controls stacking order; higher values appear on top of lower values.',
+      'q75': 'filter: brightness() adjusts element brightness; >100% = brighter, <100% = darker.',
+      'q76': 'filter: grayscale() removes colors converting to black and white; grayscale(100%) = full B&W.',
+      'q77': 'filter: hue-rotate() shifts colors around the color wheel; useful for creative effects.',
+      'q78': 'text-shadow adds shadow to text with offset, blur, and color (e.g., 2px 2px 4px black).',
+      'q79': 'clip-path clips element to a defined shape (circle, polygon, ellipse, etc.).',
+      'q80': 'perspective adds 3D depth effect to transformed elements and their children.',
+      'q81': 'backface-visibility: hidden hides element back when rotated 180° in 3D transforms.',
+      'q82': 'transform: translateX() moves element horizontally; translateY() moves vertically.',
+      'q83': 'transform: skew() distorts/skews element; skewX() is horizontal, skewY() is vertical.',
+      'q84': 'animation-timing-function controls animation speed curve: linear, ease, ease-in, ease-out, etc.',
+      'q85': 'flex-wrap: wrap allows flex items to wrap to next line instead of shrinking.',
+      'q86': 'gap creates equal space between grid items (both rows and columns simultaneously).',
+      'q87': 'grid-template-columns defines number and width of columns; e.g., 1fr 2fr creates 2 columns.',
+      'q88': 'mix-blend-mode controls how element colors blend with background; like Photoshop blend modes.',
+      'q89': 'will-change optimizes rendering before animation; hint to browser to prepare GPU acceleration.',
+      'q90': 'calc() performs math: calc(100% - 20px), combining units in CSS expressions.'
+    };
+
+    const quizQuestions = {
+      'q1': 'What does &lt;br&gt; do?',
+      'q2': 'What is the correct HTML structure starting element?',
+      'q3': 'Which tag defines a hyperlink?',
+      'q4': 'What attribute specifies image source?',
+      'q5': 'Which element represents a semantic heading?',
+      'q6': 'What does &lt;strong&gt; tag do?',
+      'q7': 'Which tag is used for unordered lists?',
+      'q8': 'What is the purpose of &lt;table&gt; tag?',
+      'q9': 'What does the &lt;form&gt; element do?',
+      'q10': 'Which attribute associates a label with an input?',
+      'q11': 'What does &lt;em&gt; tag do?',
+      'q12': 'Which element represents the root of an HTML document?',
+      'q13': 'What is the &lt;meta&gt; tag used for?',
+      'q14': 'Which tag defines the main heading?',
+      'q15': 'What does &lt;small&gt; tag do?',
+      'q16': 'What element is used for ordered lists?',
+      'q17': 'What is &lt;div&gt; used for?',
+      'q18': 'What does &lt;span&gt; do?',
+      'q19': 'What is the &lt;img&gt; tag\'s most important attribute?',
+      'q20': 'Which element contains metadata and links to stylesheets?',
+      'q21': 'What is the purpose of &lt;input&gt; tag?',
+      'q22': 'What does &lt;button&gt; tag do?',
+      'q23': 'What is &lt;textarea&gt; used for?',
+      'q24': 'What does the &lt;select&gt; tag create?',
+      'q25': 'What is &lt;table&gt; row element called?',
+      'q26': 'What element embeds external resources?',
+      'q27': 'What does &lt;code&gt; tag represent?',
+      'q28': 'Which tag is used for preformatted text?',
+      'q29': 'What does &lt;blockquote&gt; element do?',
+      'q30': 'What is the alt attribute for in &lt;img&gt;?',
+      'q31': 'What does &lt;meta charset="utf-8"&gt; specify?',
+      'q32': 'Which CSS property controls text color?',
+      'q33': 'What does CSS Flexbox do?',
+      'q34': 'Which CSS property adds space inside an element?',
+      'q35': 'What does display: grid do?',
+      'q36': 'Which attribute specifies where form data is sent?',
+      'q37': 'What does &lt;nav&gt; element represent?',
+      'q38': 'Which CSS property controls element width?',
+      'q39': 'What does the &lt;header&gt; semantic element represent?',
+      'q40': 'Which CSS property sets background color?',
+      'q41': 'What does &lt;footer&gt; element represent?',
+      'q42': 'Which CSS selector targets element with id "main"?',
+      'q43': 'What does margin: 0 auto do?',
+      'q44': 'What is &lt;section&gt; used for?',
+      'q45': 'Which CSS property changes font size?',
+      'q46': 'What does &lt;aside&gt; element represent?',
+      'q47': 'Which CSS value makes element take full width?',
+      'q48': 'What is the correct order of box model?',
+      'q49': 'What does opacity property control?',
+      'q50': 'Which property hides overflow content?',
+      'q51': 'What does cursor: pointer do?',
+      'q52': 'Which pseudo-class represents hovered state?',
+      'q53': 'What is CSS specificity?',
+      'q54': 'Which has higher specificity, class or element?',
+      'q55': 'What does &lt;article&gt; represent?',
+      'q56': 'What does justify-content do in Flexbox?',
+      'q57': 'What does align-items do in Flexbox?',
+      'q58': 'What does flex-direction: column do?',
+      'q59': 'Which property creates space around elements?',
+      'q60': 'What does border-collapse do in tables?',
+      'q61': 'What does border-radius do?',
+      'q62': 'What does transform: rotate() do?',
+      'q63': 'What does the @media query do?',
+      'q64': 'What does transform: scale() do?',
+      'q65': 'What does transition property do?',
+      'q66': 'What does @keyframes define?',
+      'q67': 'What does animation-duration specify?',
+      'q68': 'What does filter: blur() do?',
+      'q69': 'What does background-gradient create?',
+      'q70': 'What does ::before pseudo-element do?',
+      'q71': 'What does ::after pseudo-element do?',
+      'q72': 'What does position: absolute do?',
+      'q73': 'What does position: fixed do?',
+      'q74': 'What does z-index property control?',
+      'q75': 'What does filter: brightness() do?',
+      'q76': 'What does filter: grayscale() do?',
+      'q77': 'What does filter: hue-rotate() do?',
+      'q78': 'What does text-shadow property do?',
+      'q79': 'What does clip-path property do?',
+      'q80': 'What does perspective property do?',
+      'q81': 'What does backface-visibility do?',
+      'q82': 'What does transform: translateX() do?',
+      'q83': 'What does transform: skew() do?',
+      'q84': 'What does animation-timing-function do?',
+      'q85': 'What does flex-wrap: wrap do?',
+      'q86': 'What does gap property do in Grid?',
+      'q87': 'What does grid-template-columns do?',
+      'q88': 'What does mix-blend-mode do?',
+      'q89': 'What does will-change property do?',
+      'q90': 'What does calc() function allow in CSS?'
+    };
+
+    function checkQuiz() {
+      // Determine which level is active
+      const basicLevel = document.getElementById('basicLevel');
+      const midLevel = document.getElementById('midLevel');
+      const advancedLevel = document.getElementById('advancedLevel');
+      
+      let visibleLevel = null;
+      let levelQuestions = [];
+      let levelName = '';
+      
+      if (basicLevel.style.display !== 'none') {
+        visibleLevel = basicLevel;
+        levelQuestions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10',
+                         'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18', 'q19', 'q20',
+                         'q21', 'q22', 'q23', 'q24', 'q25', 'q26', 'q27', 'q28', 'q29', 'q30'];
+        levelName = 'Basic Level';
+      } else if (midLevel.style.display !== 'none') {
+        visibleLevel = midLevel;
+        levelQuestions = ['q31', 'q32', 'q33', 'q34', 'q35', 'q36', 'q37', 'q38', 'q39', 'q40',
+                         'q41', 'q42', 'q43', 'q44', 'q45', 'q46', 'q47', 'q48', 'q49', 'q50',
+                         'q51', 'q52', 'q53', 'q54', 'q55', 'q56', 'q57', 'q58', 'q59', 'q60'];
+        levelName = 'Intermediate Level';
+      } else if (advancedLevel.style.display !== 'none') {
+        visibleLevel = advancedLevel;
+        levelQuestions = ['q61', 'q62', 'q63', 'q64', 'q65', 'q66', 'q67', 'q68', 'q69', 'q70',
+                         'q71', 'q72', 'q73', 'q74', 'q75', 'q76', 'q77', 'q78', 'q79', 'q80',
+                         'q81', 'q82', 'q83', 'q84', 'q85', 'q86', 'q87', 'q88', 'q89', 'q90'];
+        levelName = 'Advanced Level';
+      }
+      
+      if (!visibleLevel) {
+        showToast('❌ Please select a quiz level first!');
+        return;
+      }
+      
+      let score = 0;
+      let answered = 0;
+
+      // Check only questions in the visible level
+      for (let qName of levelQuestions) {
+        const selected = document.querySelector(`input[name="${qName}"]:checked`);
+        const correctAnswer = quizAnswers[qName];
+        const allOptions = document.querySelectorAll(`input[name="${qName}"]`);
+        
+        if (selected) {
+          answered++;
+          const isCorrect = selected.value === correctAnswer;
+          if (isCorrect) {
+            score++;
+          }
+          
+          // Highlight answers
+          allOptions.forEach(option => {
+            const label = option.parentElement;
+            if (option.value === correctAnswer) {
+              label.style.backgroundColor = '#c8e6c9';
+              label.style.color = '#1b5e20';
+              label.style.padding = '5px';
+              label.style.borderRadius = '3px';
+              label.style.fontWeight = 'bold';
+              if (option === selected && isCorrect) {
+                label.textContent = label.textContent + ' ✅ CORRECT';
+              } else if (option === selected && !isCorrect) {
+                label.textContent = label.textContent + ' ❌ WRONG';
+              } else {
+                label.textContent = label.textContent + ' (Correct Answer)';
+              }
+            } else if (option === selected && !isCorrect) {
+              label.style.backgroundColor = '#ffcdd2';
+              label.style.color = '#b71c1c';
+              label.style.padding = '5px';
+              label.style.borderRadius = '3px';
+              label.style.fontWeight = 'bold';
+            }
+          });
+        } else {
+          // Show unanswered question
+          allOptions.forEach(option => {
+            const label = option.parentElement;
+            if (option.value === correctAnswer) {
+              label.style.backgroundColor = '#c8e6c9';
+              label.style.color = '#1b5e20';
+              label.style.padding = '5px';
+              label.style.borderRadius = '3px';
+              label.style.fontWeight = 'bold';
+              label.textContent = label.textContent + ' (Correct Answer)';
+            }
+          });
+        }
+      }
+
+      const resultsDiv = document.getElementById('quizResults');
+      const totalQuestions = levelQuestions.length;
+      
+      if (answered === 0) {
+        resultsDiv.innerHTML = '❌ Please answer at least one question!';
+        resultsDiv.style.color = '#d32f2f';
+        return;
+      }
+
+      const percentage = Math.round((score / totalQuestions) * 100);
+      
+      let resultHTML = `<div style="padding:15px;border-radius:8px;background:#f5f5f5;">`;
+      resultHTML += `<p style="font-size:16px;color:#333;margin:5px 0;"><strong>${levelName}</strong></p>`;      
+      if (percentage === 100) {
+        resultHTML += `<h3 style="color:#4caf50;">🏆 Perfect Score!</h3>`;
+        resultHTML += `<p style="font-size:18px;color:#4caf50;"><strong>${score}/${totalQuestions} (${percentage}%)</strong></p>`;
+      } else if (percentage >= 80) {
+        resultHTML += `<h3 style="color:#4caf50;">✅ Excellent!</h3>`;
+        resultHTML += `<p style="font-size:18px;color:#4caf50;"><strong>${score}/${totalQuestions} (${percentage}%)</strong></p>`;
+      } else if (percentage >= 60) {
+        resultHTML += `<h3 style="color:#ff9800;">⚠️ Good Attempt</h3>`;
+        resultHTML += `<p style="font-size:18px;color:#ff9800;"><strong>${score}/${totalQuestions} (${percentage}%)</strong></p>`;
+      } else {
+        resultHTML += `<h3 style="color:#d32f2f;">❌ Needs More Review</h3>`;
+        resultHTML += `<p style="font-size:18px;color:#d32f2f;"><strong>${score}/${totalQuestions} (${percentage}%)</strong></p>`;
+      }
+      
+      if (answered < totalQuestions) {
+        resultHTML += `<p style="color:#ff9800;"><strong>⚠️ ${totalQuestions - answered} questions unanswered</strong></p>`;
+      }
+      
+      resultHTML += `</div>`;
+      resultsDiv.innerHTML = resultHTML;
+      
+      // Add explanations for correct answers
+      let explanationsHTML = '<div style="margin-top:20px;">';
+      explanationsHTML += '<h4 style="margin-bottom:10px;color:#333;border-bottom:2px solid #2196F3;padding-bottom:5px;">📚 Answer Explanations:</h4>';
+      
+      for (let qName of levelQuestions) {
+        const selected = document.querySelector(`input[name="${qName}"]:checked`);
+        const correctAnswer = quizAnswers[qName];
+        const allOptions = document.querySelectorAll(`input[name="${qName}"]`);
+        
+        // Find which option is correct
+        let correctOptionText = '';
+        allOptions.forEach(option => {
+          if (option.value === correctAnswer) {
+            correctOptionText = option.nextElementSibling ? option.nextElementSibling.textContent.trim() : '';
+            if (!correctOptionText) {
+              correctOptionText = option.parentElement.textContent.replace(option.outerHTML, '').trim();
+            }
+          }
+        });
+        
+        const explanation = correctAnswerExplanations[qName] || 'No explanation available.';
+        const questionText = quizQuestions[qName] || 'Question not found';
+        
+        // Only show explanation if question was answered
+        if (selected) {
+          const isCorrect = selected.value === correctAnswer;
+          const statusIcon = isCorrect ? '✅' : '❌';
+          const statusColor = isCorrect ? '#4caf50' : '#f44336';
+          
+          explanationsHTML += `
+            <div style="margin-top:12px;padding:10px;background:#f9f9f9;border-left:4px solid ${statusColor};border-radius:3px;">
+              <p style="margin:5px 0;font-weight:bold;color:#333;font-size:14px;">${statusIcon} ${questionText}</p>
+              <p style="margin:5px 0;font-size:13px;color:#555;"><strong>Correct:</strong> ${correctOptionText}</p>
+              <p style="margin:5px 0;font-size:13px;color:#666;line-height:1.4;">${explanation}</p>
+            </div>
+          `;
+        }
+      }
+      
+      explanationsHTML += '</div>';
+      resultsDiv.innerHTML += explanationsHTML;
+      
+      // Scroll to results
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function checkQuizOld(event) {
+      event.preventDefault();
+      const selected = document.querySelector('input[name="q1"]:checked');
+      if (!selected) {
+        alert('Please select an answer.');
+        return;
+      }
+      if (selected.value === 'b') {
+        alert('Correct!');
+      } else {
+        alert('Incorrect. The correct answer is: Inserts a line break.');
+      }
+    }
+
+    // Toast helper
+    function showToast(msg, timeout = 1800) {
+      const el = document.getElementById('toast');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=>{ el.style.display = 'none'; }, timeout);
+    }
+
+    // Tag/Attribute definitions
+    const definitions = {
+      // HTML Beginner Tags
+      'html': 'HTML root element that wraps all other elements on the page.',
+      'head': 'HTML element containing metadata, title, links, and scripts (not visible on page).',
+      'body': 'HTML element containing all visible page content (text, images, elements).',
+      '!doctype': 'DOCTYPE declaration - tells the browser this is an HTML5 document. Must be the first line. Syntax: <!DOCTYPE html>. Not a tag, but a document type declaration. Without it, browsers may render in "quirks mode" with inconsistent behavior.',
+      'title': 'HTML element that sets the page title shown in the browser tab.',
+      'meta': 'HTML element for specifying metadata like character encoding, viewport, etc.',
+      'link': 'HTML element for linking external resources like stylesheets (CSS files).',
+      'h1': 'HTML heading level 1 - largest and most important heading for main titles.',
+      'h2': 'HTML heading level 2 - for main section headings.',
+      'h3': 'HTML heading level 3 - for subsection headings.',
+      'h4': 'HTML heading level 4 - for smaller subsection headings.',
+      'h5': 'HTML heading level 5 - for even smaller headings.',
+      'h6': 'HTML heading level 6 - smallest heading level.',
+      'p': 'HTML paragraph element for text content and prose.',
+      'br': 'HTML element for inserting a line break within text or paragraphs.',
+      'strong': 'HTML element for marking text as important (typically bold).',
+      'em': 'HTML element for emphasizing text (typically italic).',
+      'small': 'HTML element for marking text as less important or fine print.',
+      'code': 'HTML element for displaying inline code snippets with monospace font.',
+      'pre': 'HTML element for preformatted text (preserves spaces and line breaks).',
+      
+      // HTML Intermediate Tags
+      'ul': 'HTML element for unordered (bulleted) lists.',
+      'ol': 'HTML element for ordered (numbered) lists.',
+      'li': 'HTML list item element - used inside ul or ol.',
+      'a': 'HTML anchor element for hyperlinks; href attribute specifies destination.',
+      'img': 'HTML element for embedding images; src attribute specifies image file.',
+      'picture': 'HTML element for responsive images with multiple sources.',
+      'figure': 'HTML semantic element for self-contained illustrations or diagrams.',
+      'figcaption': 'HTML element for adding captions to figure elements.',
+      'hr': 'HTML element for inserting a horizontal line (thematic break).',
+      
+      // HTML Intermediate Layout Tags
+      'div': 'HTML container element for grouping and styling content (block-level).',
+      'span': 'HTML inline container element for styling text without line breaks.',
+      'nav': 'HTML semantic element for navigation links (menus, breadcrumbs, etc.).',
+      'main': 'HTML semantic element for the main content area of the page.',
+      'section': 'HTML semantic element for grouping related content and headings.',
+      'aside': 'HTML semantic element for sidebars or tangentially related content.',
+      'footer': 'HTML semantic element for page or section footers.',
+      'header': 'HTML semantic element for page or section headers/introductions.',
+      'article': 'HTML semantic element for self-contained content (blog posts, articles).',
+      
+      // HTML Form Tags
+      'form': 'HTML element container for collecting user input; action and method attributes.',
+      'label': 'HTML element for form labels; for attribute associates it with input.',
+      'input': 'HTML element for user input fields (text, password, checkbox, radio, etc.).',
+      'textarea': 'HTML element for multi-line text input areas.',
+      'select': 'HTML element for dropdown menus; contains option elements.',
+      'option': 'HTML element representing a choice within a select dropdown.',
+      'button': 'HTML interactive element for user actions; type can be submit, reset, button.',
+      
+      // HTML Table Tags
+      'table': 'HTML element for structured data in rows and columns.',
+      'caption': 'HTML element for table titles/captions displayed above or below table.',
+      'thead': 'HTML element grouping header rows in a table.',
+      'tbody': 'HTML element grouping body (data) rows in a table.',
+      'tr': 'HTML table row element containing td or th cells.',
+      'td': 'HTML table data cell element (regular cell).',
+      'th': 'HTML table header cell element (typically bold, centered).',
+      
+      // HTML Media Tags
+      'audio': 'HTML element for embedding audio players; src or source child elements.',
+      'video': 'HTML element for embedding video players with controls.',
+      'iframe': 'HTML element for embedding external content or other web pages.',
+      'canvas': 'HTML element for drawing graphics using JavaScript.',
+      'source': 'HTML element specifying media source file and type (used in audio/video).',
+      
+      // CSS Basic Properties
+      'color': 'CSS property for setting the text/foreground color of an element.',
+      'background-color': 'CSS property for setting the background color of an element.',
+      'font-size': 'CSS property for controlling the size of text (px, em, rem, %, etc).',
+      'font-weight': 'CSS property for controlling text thickness (normal, bold, 100-900).',
+      'text-align': 'CSS property for aligning text horizontally (left, center, right, justify).',
+      'text-decoration': 'CSS property for text decoration (underline, overline, line-through).',
+      'line-height': 'CSS property for setting vertical spacing between lines of text.',
+      'margin': 'CSS property for creating space outside an element (outside the border).',
+      'padding': 'CSS property for creating space inside an element (inside the border).',
+      
+      // CSS Box Model
+      'border': 'CSS property for adding a border around an element (width, style, color).',
+      'border-radius': 'CSS property for rounding corners of an element or border.',
+      'box-shadow': 'CSS property for adding shadow effects around an element.',
+      'width': 'CSS property for setting the element width (px, %, em, auto, etc).',
+      'height': 'CSS property for setting the element height (px, %, em, auto, etc).',
+      'box-sizing': 'CSS property controlling how width/height is calculated (border-box, content-box).',
+      'outline': 'CSS property similar to border but drawn outside padding (doesn\'t affect layout).',
+      'opacity': 'CSS property for controlling element transparency (0-1, where 0 is invisible).',
+      
+      // CSS Flexbox
+      'display': 'CSS property controlling how element is rendered (block, inline, flex, grid, none).',
+      'flex': 'CSS property for Flexbox layout; shorthand for flex-grow, flex-shrink, flex-basis.',
+      'justify-content': 'Flexbox property for aligning flex items along the main axis (horizontal).',
+      'align-items': 'Flexbox property for aligning flex items along the cross axis (vertical).',
+      'flex-wrap': 'Flexbox property controlling whether items wrap to next line (wrap, nowrap).',
+      'gap': 'CSS property for setting space between grid or flex items.',
+      
+      // CSS Grid
+      'grid': 'CSS Grid: A 2D layout system for creating complex page layouts with rows and columns.',
+      'grid-template-columns': 'CSS Grid property defining the size and number of grid columns.',
+      'grid-template-rows': 'CSS Grid property defining the size and number of grid rows.',
+      
+      // CSS Positioning
+      'position': 'CSS property for positioning (static, relative, absolute, fixed, sticky).',
+      'top': 'CSS property for positioning: distance from top edge (used with non-static position).',
+      'left': 'CSS property for positioning: distance from left edge (used with non-static position).',
+      'right': 'CSS property for positioning: distance from right edge (used with non-static position).',
+      'bottom': 'CSS property for positioning: distance from bottom edge (used with non-static position).',
+      'z-index': 'CSS property controlling stacking order of positioned elements (higher = on top).',
+      
+      // CSS Transforms & Transitions
+      'transform': 'CSS property for 2D/3D transformations (translate, scale, rotate, skew, etc).',
+      'transition': 'CSS property for smoothly animating CSS property changes over time.',
+      'animation': 'CSS property for running keyframe-based animations with timing and iteration.',
+      'keyframes': 'CSS at-rule for defining animation keyframes (0%, 50%, 100%, etc).',
+      'filter': 'CSS property for applying visual effects (blur, brightness, contrast, etc).',
+      'gradient': 'CSS value for smooth color transitions (linear-gradient, radial-gradient).',
+      
+      // Attributes
+      'class': 'HTML attribute for assigning one or more CSS class names to an element.',
+      'id': 'HTML attribute for uniquely identifying a single element on the page.',
+      'href': 'HTML attribute on anchor tags specifying the link destination URL.',
+      'src': 'HTML attribute for specifying source file (images, scripts, iframes, video, etc).',
+      'alt': 'HTML attribute on images providing text description (accessibility, broken images).',
+      'type': 'HTML attribute on input/button elements specifying the input type.',
+      'placeholder': 'HTML attribute on input/textarea showing hint text when field is empty.',
+      'name': 'HTML attribute for form inputs; used to identify form data on submission.',
+      'value': 'HTML attribute on input/option elements specifying the input or option value.',
+      'target': 'HTML attribute on anchors (_blank opens in new tab, _self same window).',
+      'rel': 'HTML attribute on links specifying relationship (noopener, stylesheet, etc).',
+      'method': 'HTML attribute on forms (GET or POST) specifying how data is sent.',
+      'action': 'HTML attribute on forms specifying the URL to send form data to.',
+      'cursor': 'CSS property for changing mouse cursor appearance (pointer, default, text, etc).',
+      'style': 'HTML attribute and element for embedding inline or document-level CSS rules.',
+      'charset': 'HTML meta attribute specifying the character encoding (usually utf-8).',
+      'lang': 'HTML attribute specifying the language of the document (e.g., en, es, fr).',
+      'for': 'HTML attribute on label elements that associates label with an input by its id.',
+      'srcset': 'HTML attribute on img/source specifying multiple image sources for responsive images.',
+      'width': 'HTML attribute for specifying element width; also a CSS property.',
+      'border': 'HTML attribute on tables specifying border width; also a CSS property.',
+      'controls': 'HTML attribute on audio/video elements showing player controls (play, pause, etc).',
+      'rowspan': 'HTML attribute on table cells (td/th) specifying how many rows the cell spans.',
+      'colspan': 'HTML attribute on table cells (td/th) specifying how many columns the cell spans.',
+      
+      // Advanced CSS - Section 12
+      'linear-gradient': 'CSS function creating a linear gradient background from one color to another in a specified direction.',
+      'radial-gradient': 'CSS function creating a radial gradient background radiating from a center point outward.',
+      'blur': 'CSS filter effect that applies a Gaussian blur to an element (blur(5px) = 5px blur radius).',
+      'brightness': 'CSS filter effect that adjusts element brightness (1 = normal, >1 = brighter, <1 = darker).',
+      'contrast': 'CSS filter effect that adjusts element contrast (1 = normal, >1 = more contrast, <1 = less).',
+      'grayscale': 'CSS filter effect that converts element to grayscale/black-and-white (0-100% or 0-1).',
+      'shadow': 'CSS filter effect that adds a drop shadow to an element.',
+      'blur()': 'CSS filter function applying blur effect with radius parameter (blur(5px)).',
+      'brightness()': 'CSS filter function adjusting brightness with value parameter (brightness(1.2)).',
+      'contrast()': 'CSS filter function adjusting contrast with value parameter (contrast(1.5)).',
+      'grayscale()': 'CSS filter function converting to grayscale with percentage (grayscale(100%)).',
+      'before': 'CSS pseudo-element ::before - creates element before content; requires content property.',
+      'after': 'CSS pseudo-element ::after - creates element after content; requires content property.',
+      '::before': 'CSS pseudo-element that inserts generated content before an element\'s content.',
+      '::after': 'CSS pseudo-element that inserts generated content after an element\'s content.',
+      'content': 'CSS property used with ::before/::after pseudo-elements to specify generated content (text, icons, etc).',
+      'hover': 'CSS pseudo-class for styling element when user hovers mouse over it (:hover).',
+      'keyframes': 'CSS at-rule for defining animation keyframes (0%, 50%, 100%) with property changes.'
+    };
+
+    function showDefinition(term) {
+      const def = definitions[term.toLowerCase()];
+      if (!def) {
+        showToast('No definition found for: ' + term);
+        return;
+      }
+      const modal = document.getElementById('defModal');
+      document.getElementById('defTitle').textContent = term;
+      document.getElementById('defBody').textContent = def;
+      modal.style.display = 'flex';
+    }
+
+    function updatePreview() {
+      const iframe = document.getElementById('preview');
+      const userHtml = document.getElementById('htmlCode').value || '';
+      const isDark = document.body.classList.contains('dark');
+
+      const doc = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{--bg:#ffffff;--text:#000000;--pre:#f4f4f4}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);padding:10px;}
+    pre{background:var(--pre);padding:10px;border-radius:6px;overflow:auto}
+    code{background:transparent}
+  </style>
+</head>
+<body${isDark ? ' class="dark"' : ''}>
+${userHtml}
+</body>
+</html>`;
+
+      if (iframe) iframe.srcdoc = doc;
+    }
+
+    // Add UI: copy buttons and lint output
+    function initExamplesUI() {
+      document.querySelectorAll('pre').forEach((pre)=>{
+        // avoid double-initializing
+        if (pre.dataset.uiInit) return;
+        pre.dataset.uiInit = '1';
+
+        // wrap pre in a container so we can position the copy button
+        const wrap = document.createElement('div');
+        wrap.className = 'example-wrap';
+        pre.parentNode.insertBefore(wrap, pre);
+        wrap.appendChild(pre);
+
+        // copy button
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'copy-btn';
+        btn.textContent = 'Copy';
+        wrap.appendChild(btn);
+
+        btn.addEventListener('click', async ()=>{
+          const codeText = pre.innerText;
+          try {
+            await navigator.clipboard.writeText(codeText);
+            btn.textContent = 'Copied';
+            showToast('Snippet copied to clipboard');
+            setTimeout(()=>btn.textContent='Copy',1200);
+          } catch (e) {
+            // fallback: try execCommand
+            const ta = document.createElement('textarea');
+            ta.value = codeText; document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy',1200); } catch(e2) { alert('Copy failed'); }
+            ta.remove();
+          }
+        });
+
+        // make description togglable: insert a small more-note under the description if present
+        const desc = wrap.nextElementSibling;
+        if (desc && desc.classList && desc.classList.contains('example-desc')) {
+          const more = document.createElement('div');
+          more.className = 'more-note';
+          more.textContent = 'Tip: paste into the Try editor to preview. Use the Copy button to copy this snippet. Click the description to toggle this note.';
+          desc.appendChild(more);
+          desc.style.cursor = 'pointer';
+          desc.addEventListener('click', ()=>{ more.style.display = more.style.display === 'block' ? 'none' : 'block'; });
+        }
+      });
+    }
+
+    // Wire up event handlers
+    document.addEventListener('DOMContentLoaded', function() {
+      const ta = document.getElementById('htmlCode');
+      if (ta) ta.addEventListener('input', updatePreview);
+      updatePreview();
+      initExamplesUI();
+
+      document.getElementById('toggleSectionsBtn')?.addEventListener('click', toggleAllSections);
+      document.getElementById('toggleThemeBtn')?.addEventListener('click', toggleDarkMode);
+      
+      // Quiz submit handler
+      document.getElementById('submitQuizBtn')?.addEventListener('click', checkQuiz);
+      
+      // Quiz level switchers
+      document.getElementById('basicLevelBtn')?.addEventListener('click', function() {
+        document.querySelectorAll('.quizLevel').forEach(el => el.style.display = 'none');
+        document.getElementById('basicLevel').style.display = 'block';
+        document.getElementById('quizResults').innerHTML = '';
+        // Reset radio buttons
+        document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        this.style.backgroundColor = '#4caf50';
+        document.getElementById('midLevelBtn').style.backgroundColor = '#bbb';
+        document.getElementById('advancedLevelBtn').style.backgroundColor = '#bbb';
+        showToast('Basic Level Selected - 10 Questions');
+      });
+      
+      document.getElementById('midLevelBtn')?.addEventListener('click', function() {
+        document.querySelectorAll('.quizLevel').forEach(el => el.style.display = 'none');
+        document.getElementById('midLevel').style.display = 'block';
+        document.getElementById('quizResults').innerHTML = '';
+        document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        document.getElementById('basicLevelBtn').style.backgroundColor = '#bbb';
+        this.style.backgroundColor = '#ff9800';
+        document.getElementById('advancedLevelBtn').style.backgroundColor = '#bbb';
+        showToast('Intermediate Level Selected - 8 Questions');
+      });
+      
+      document.getElementById('advancedLevelBtn')?.addEventListener('click', function() {
+        document.querySelectorAll('.quizLevel').forEach(el => el.style.display = 'none');
+        document.getElementById('advancedLevel').style.display = 'block';
+        document.getElementById('quizResults').innerHTML = '';
+        document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        document.getElementById('basicLevelBtn').style.backgroundColor = '#bbb';
+        document.getElementById('midLevelBtn').style.backgroundColor = '#bbb';
+        this.style.backgroundColor = '#f44336';
+        showToast('Advanced Level Selected - 7 Questions');
+      });
+      
+      // Close definition modal
+      document.getElementById('defClose')?.addEventListener('click', function() {
+        document.getElementById('defModal').style.display = 'none';
+      });
+      
+      // Add click handlers to code snippets in lists and pre blocks
+      document.querySelectorAll('code').forEach(codeEl => {
+        // Skip if it's inside a <pre> tag (we handle those separately for double-click)
+        if (codeEl.closest('pre')) {
+          codeEl.style.cursor = 'help';
+          codeEl.addEventListener('dblclick', function(e) {
+            let term = window.getSelection().toString().trim();
+            if (!term) {
+              const text = this.textContent;
+              const matches = text.match(/[a-zA-Z0-9_\-:]+/g) || [];
+              term = matches.length > 0 ? matches[0] : '';
+            }
+            if (term) {
+              showDefinition(term);
+            }
+          });
+        } else {
+          // Single click for inline code in lists
+          codeEl.style.cursor = 'pointer';
+          codeEl.style.textDecoration = 'underline dotted';
+          codeEl.addEventListener('click', function(e) {
+            e.stopPropagation();
+            let term = this.dataset.term || this.textContent.trim();
+            // If no data-term, clean up HTML brackets and angle signs
+            if (!this.dataset.term) {
+              term = term.replace(/[<>]/g, '').replace(/&lt;/g, '').replace(/&gt;/g, '');
+            }
+            if (term) {
+              showDefinition(term);
+            }
+          });
+        }
+      });
+      
+      const editor = document.getElementById('htmlCode');
+      if (editor) {
+        editor.addEventListener('keydown', function(e){
+          if (e.key !== 'Enter') return;
+          const pos = this.selectionStart;
+          const lineStart = this.value.lastIndexOf('\n', pos-1) + 1;
+          const lineText = this.value.slice(lineStart, pos).trim();
+          if (lineText === '!') {
+            e.preventDefault();
+            const before = this.value.slice(0, lineStart);
+            const after = this.value.slice(pos);
+            const template = `<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width,initial-scale=1">\n  <title>Document</title>\n</head>\n<body>\n\n</body>\n</html>`;
+            this.value = before + template + after;
+            const bodyOpenIdx = before.length + template.indexOf('<body>');
+            const caretPos = bodyOpenIdx + '<body>\n'.length;
+            this.selectionStart = this.selectionEnd = caretPos;
+            updatePreview();
+            showToast('Expanded to HTML boilerplate');
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
